@@ -2,6 +2,8 @@ package hr.projekt.secureVideoFile.managers;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+
 public interface FileConversionManager {
 
     /**
@@ -11,5 +13,7 @@ public interface FileConversionManager {
      * @param password
      * @return byte[] of video that was made from file conversion
      */
-    byte[] convertFileToImage(MultipartFile file, String password);
+    byte[] convertFileToSignedVideo(MultipartFile file, String password);
+    File convertSignedVideoToFile(String videoGoogleDiskUrl, String password);
+
 }
