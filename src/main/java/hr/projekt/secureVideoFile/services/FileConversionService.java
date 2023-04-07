@@ -1,5 +1,6 @@
 package hr.projekt.secureVideoFile.services;
 
+import javafx.util.Pair;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
@@ -12,9 +13,9 @@ public interface FileConversionService {
      *
      * @param file
      * @param password
-     * @return image list that was made from file conversion
+     * @return Pair of image list and video name
      */
-    List<BufferedImage> convertFileToImageList(MultipartFile file, String password);
+    Pair<List<BufferedImage>, String> convertFileToImageList(MultipartFile file, String password, String name);
 
     /**
      * This method is used for converting and decrypting image list to file
@@ -23,6 +24,6 @@ public interface FileConversionService {
      * @param password
      * @return byte[] of file that was made from conversion
      */
-    byte[] convertImageListToFile(List<BufferedImage> imageList, String password);
+    byte[] convertImageListToFile(List<BufferedImage> imageList, String password, String videoName);
 
 }

@@ -1,9 +1,11 @@
 package hr.projekt.secureVideoFile.utils;
 
+import hr.projekt.secureVideoFile.constants.VideoConstants;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.api.awt.AWTSequenceEncoder;
 import org.jcodec.common.io.NIOUtils;
@@ -12,7 +14,10 @@ import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +25,9 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class VideoUtil {
 
-    public static void imagesToVideo(List<BufferedImage> frames, String outputPath) throws Exception {
+    public static void imagesToVideo(List<BufferedImage> frames, String videoName) throws Exception {
         // Create an AWTSequenceEncoder to encode the video frames
-        AWTSequenceEncoder encoder = AWTSequenceEncoder.createSequenceEncoder(new File(outputPath), 25);
+        AWTSequenceEncoder encoder = AWTSequenceEncoder.createSequenceEncoder(new File(VideoConstants.TMP_STORAGE + videoName), 25);
 
         // Encode each frame and add it to the video
         for (BufferedImage frame : frames) {
