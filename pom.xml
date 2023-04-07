@@ -16,6 +16,15 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
+
+	<repositories>
+		<repository>
+			<id>GroupDocsJavaAPI</id>
+			<name>GroupDocs Java API</name>
+			<url>https://repository.groupdocs.com/repo/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -46,6 +55,26 @@
 			<groupId>org.jcodec</groupId>
 			<artifactId>jcodec-javase</artifactId>
 			<version>0.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.groupdocs</groupId>
+			<artifactId>groupdocs-comparison</artifactId>
+			<version>22.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.33.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-drive</artifactId>
+			<version>v3-rev20211107-1.32.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-jetty</artifactId>
+			<version>1.32.1</version>
 		</dependency>
 	</dependencies>
 

@@ -3,6 +3,7 @@ package hr.projekt.secureVideoFile.utils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -47,4 +48,16 @@ public class ByteArrayUtil {
 
         return fileContent;
     }
+
+    public static byte[] readMultipartFileToByteArray(MultipartFile file) {
+        byte[] fileContent;
+        try {
+            fileContent = file.getBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return fileContent;
+    }
+
 }

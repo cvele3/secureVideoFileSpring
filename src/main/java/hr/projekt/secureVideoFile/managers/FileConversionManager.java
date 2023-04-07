@@ -13,7 +13,7 @@ public interface FileConversionManager {
      * @param password
      * @return byte[] of video that was made from file conversion
      */
-    byte[] convertFileToSignedVideo(MultipartFile file, String password);
-    File convertSignedVideoToFile(String videoGoogleDiskUrl, String password);
+    String convertFileToSignedVideo(MultipartFile file, String password, String name);
+    byte[] convertSignedVideoToFile(String videoName, String password);
 
 }

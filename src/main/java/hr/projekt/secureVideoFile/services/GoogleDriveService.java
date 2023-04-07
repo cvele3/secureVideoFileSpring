@@ -11,14 +11,14 @@ public interface GoogleDriveService {
      * @param imageList
      * @return path where video is located after storing it on Google Drive
      */
-    String imageListToVideoAndToGoogleDrive(List<BufferedImage> imageList);
+    String imageListToVideoAndToGoogleDrive(List<BufferedImage> imageList, String videoName);
 
     /**
      * This method is used for fetching video from Google Drive and converting it to image list
      *
-     * @param pathToVideoOnGoogleDrive
+     * @param videoName
      * @return image list used later on for conversion to file
      */
-    List<BufferedImage> videoFromGoogleDriveToImageList(String pathToVideoOnGoogleDrive);
+    List<BufferedImage> videoFromGoogleDriveToImageList(String videoName);
 
 }

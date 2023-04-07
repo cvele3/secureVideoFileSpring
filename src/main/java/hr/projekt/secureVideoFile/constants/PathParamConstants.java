@@ -7,4 +7,6 @@ import lombok.AllArgsConstructor;
 public class PathParamConstants {
 
     public static final String UPLOAD_FILE = "/upload";
+
+    public static final String RETRIEVE_FILE = "/retrieve";
 }
