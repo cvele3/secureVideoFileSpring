@@ -1,5 +1,7 @@
 package hr.projekt.secureVideoFile.utils;
 
+import hr.projekt.secureVideoFile.enums.StatusCode;
+import hr.projekt.secureVideoFile.exceptions.FileManipulationException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,7 +22,7 @@ public class ImageUtil {
         try {
             image = javax.imageio.ImageIO.read(new File(filePath));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileManipulationException(StatusCode.ERROR_WHILE_READING_FILE, e.getMessage());
         }
         StringBuilder sb = new StringBuilder();
         for (int y = 0; y < image.getHeight(); y++) {

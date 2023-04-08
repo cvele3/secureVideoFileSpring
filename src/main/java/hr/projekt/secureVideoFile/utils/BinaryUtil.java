@@ -1,5 +1,7 @@
 package hr.projekt.secureVideoFile.utils;
 
+import hr.projekt.secureVideoFile.enums.StatusCode;
+import hr.projekt.secureVideoFile.exceptions.FileManipulationException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,7 +36,7 @@ public class BinaryUtil {
         try {
             javax.imageio.ImageIO.write(image, "png", output);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileManipulationException(StatusCode.ERROR_WHILE_SAVING_FILE, e.getMessage());
         }
     }
 

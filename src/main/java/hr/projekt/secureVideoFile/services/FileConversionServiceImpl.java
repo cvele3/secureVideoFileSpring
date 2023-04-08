@@ -1,6 +1,8 @@
 package hr.projekt.secureVideoFile.services;
 
 import hr.projekt.secureVideoFile.constants.ImageConstants;
+import hr.projekt.secureVideoFile.enums.StatusCode;
+import hr.projekt.secureVideoFile.exceptions.FileEncryptionException;
 import hr.projekt.secureVideoFile.utils.BinaryUtil;
 import hr.projekt.secureVideoFile.utils.ByteArrayUtil;
 import hr.projekt.secureVideoFile.utils.FileEncryptionUtil;
@@ -30,7 +32,7 @@ public class FileConversionServiceImpl implements FileConversionService{
         try {
             fileContent = FileEncryptionUtil.encryptFile(fileContent, password);
         } catch (GeneralSecurityException e) {
-            throw new RuntimeException(e);
+            throw new FileEncryptionException(StatusCode.FILE_ENCRYPTION_ERROR,e.getMessage());
         }
 
         // Convert encrypted byte[] to binary string
@@ -80,7 +82,7 @@ public class FileConversionServiceImpl implements FileConversionService{
         try {
             fileContent = FileEncryptionUtil.decryptFile(fileContent, password);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new FileEncryptionException(StatusCode.FILE_DECRYPTION_ERROR, e.getMessage());
         }
 
 

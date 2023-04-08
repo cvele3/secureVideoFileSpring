@@ -1,5 +1,7 @@
 package hr.projekt.secureVideoFile.utils;
 
+import hr.projekt.secureVideoFile.enums.StatusCode;
+import hr.projekt.secureVideoFile.exceptions.FileManipulationException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +24,7 @@ public class ByteArrayUtil {
             fos.write(byteArray);
             fos.close();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new FileManipulationException(StatusCode.ERROR_WHILE_SAVING_FILE, e.getMessage());
         }
     }
 
@@ -43,7 +45,7 @@ public class ByteArrayUtil {
             fis.read(fileContent);
             fis.close();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new FileManipulationException(StatusCode.ERROR_WHILE_SAVING_FILE, e.getMessage());
         }
 
         return fileContent;
@@ -54,7 +56,7 @@ public class ByteArrayUtil {
         try {
             fileContent = file.getBytes();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileManipulationException(StatusCode.ERROR_WHILE_READING_FILE, e.getMessage());
         }
 
         return fileContent;

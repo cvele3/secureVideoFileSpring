@@ -17,7 +17,7 @@ import com.google.api.services.drive.model.FileList;
 import com.sun.tools.javac.Main;
 import hr.projekt.secureVideoFile.constants.VideoConstants;
 import hr.projekt.secureVideoFile.enums.StatusCode;
-import hr.projekt.secureVideoFile.exceptions.GoogleDriveVideoDownloadException;
+import hr.projekt.secureVideoFile.exceptions.*;
 import hr.projekt.secureVideoFile.utils.VideoUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
         try {
             VideoUtil.imagesToVideo(imageList, videoName + VideoConstants.VIDEO_FORMAT);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ImageConversionException(StatusCode.IMAGE_CONVERSION_ERROR,e.getMessage());
         }
 
         File file = new File(VideoConstants.TMP_STORAGE + videoName + VideoConstants.VIDEO_FORMAT);
@@ -60,13 +60,13 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
                     .setFields("id, name, size")
                     .execute();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new GoogleDriveUploadException(StatusCode.GOOGLE_DRIVE_UPLOAD_ERROR, e.getMessage());
         }
 
         // Delete the file after uploading to Google Drive
         boolean deleted = file.delete();
         if (!deleted) {
-            throw new RuntimeException("Failed to delete file: " + file.getAbsolutePath());
+            throw new FileManipulationException(StatusCode.FILE_DELETION_ERROR, "Error while deleting file");
         }
 
         return videoName + VideoConstants.VIDEO_FORMAT;
@@ -97,13 +97,13 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
         try {
             imageList = VideoUtil.videoToImages(outputFilePath);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new VideoConversionException(StatusCode.VIDEO_CONVERSION_ERROR, e.getMessage());
         }
 
         File file = new File(outputFilePath);
         boolean deleted = file.delete();
         if (!deleted) {
-            throw new RuntimeException("Failed to delete file: " + file.getAbsolutePath());
+            throw new FileManipulationException(StatusCode.FILE_DELETION_ERROR, "Error while deleting file");
         }
 
         return imageList;
@@ -116,10 +116,8 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
         NetHttpTransport httpTransport = null;
         try {
             httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        } catch (GeneralSecurityException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new HttpTransportException(StatusCode.HTTP_TRANSPORT_ERROR, e.getMessage());
         }
 
 
@@ -129,7 +127,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
             FileInputStream in = new FileInputStream(file);
             clientSecrets = GoogleClientSecrets.load(jsonFactory, new InputStreamReader(in));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new GoogleDriveInitializationException(StatusCode.GOOGLE_DRIVE_INITIALIZATION_ERROR, e.getMessage());
         }
 
         GoogleAuthorizationCodeFlow flow = null;
@@ -144,7 +142,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
                     .setAccessType("offline")
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new GoogleDriveInitializationException(StatusCode.GOOGLE_DRIVE_INITIALIZATION_ERROR, e.getMessage());
         }
 
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
@@ -152,7 +150,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
         try {
             credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new GoogleDriveInitializationException(StatusCode.GOOGLE_DRIVE_INITIALIZATION_ERROR, e.getMessage());
         }
 
 
