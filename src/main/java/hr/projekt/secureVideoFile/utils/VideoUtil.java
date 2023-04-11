@@ -26,6 +26,14 @@ import java.util.List;
 public class VideoUtil {
 
     public static void imagesToVideo(List<BufferedImage> frames, String videoName) throws Exception {
+
+        //check if folder for temporary video storage exists
+        File pathToTmpStorage = new File(VideoConstants.TMP_STORAGE);
+
+        if (!pathToTmpStorage.exists()) {
+            pathToTmpStorage.mkdirs();
+        }
+
         // Create an AWTSequenceEncoder to encode the video frames
         AWTSequenceEncoder encoder = AWTSequenceEncoder.createSequenceEncoder(new File(VideoConstants.TMP_STORAGE + videoName), 25);
 
