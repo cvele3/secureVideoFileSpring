@@ -9,4 +9,6 @@ public class PathParamConstants {
     public static final String UPLOAD_FILE = "/upload";
 
     public static final String RETRIEVE_FILE = "/retrieve";
+
+    public static final String HELLO_TEST = "/hello";
 }

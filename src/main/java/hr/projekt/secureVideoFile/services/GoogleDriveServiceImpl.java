@@ -37,7 +37,12 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
     @Override
     public String imageListToVideoAndToGoogleDrive(List<BufferedImage> imageList, String videoName) {
 
+        log.info("\t \t Initializing drive..");
+
         Drive service = initializeDrive();
+
+
+        log.info("\t \t Converting encrypted buffered images to video..");
 
         try {
             VideoUtil.imagesToVideo(imageList, videoName + VideoConstants.VIDEO_FORMAT);
@@ -45,12 +50,19 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
             throw new ImageConversionException(StatusCode.IMAGE_CONVERSION_ERROR,e.getMessage());
         }
 
+
+        log.info("\t \t Converting video to file..");
+
+
         File file = new File(VideoConstants.TMP_STORAGE + videoName + VideoConstants.VIDEO_FORMAT);
         FileContent mediaContent = new FileContent(VideoConstants.MIME_TYPE, file);
 
         // Create a file metadata
         com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
         fileMetadata.setName(videoName + VideoConstants.VIDEO_FORMAT);
+
+
+        log.info("\t \t Uploading file to Google Drive..");
 
         // Upload the file to Google Drive
         com.google.api.services.drive.model.File uploadedFile = null;
@@ -63,6 +75,9 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
             throw new GoogleDriveUploadException(StatusCode.GOOGLE_DRIVE_UPLOAD_ERROR, e.getMessage());
         }
 
+
+        log.info("\t \t Cleaning up temp file saved locally..");
+
         // Delete the file after uploading to Google Drive
         boolean deleted = file.delete();
         if (!deleted) {
@@ -74,7 +89,13 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
 
     @Override
     public List<BufferedImage> videoFromGoogleDriveToImageList(String videoName) {
+
+        log.info("\t \t Initializing drive..");
+
         Drive service = initializeDrive();
+
+
+        log.info("\t \t Downloading video from Google Drive..");
 
         String outputFilePath = VideoConstants.TMP_STORAGE + videoName;
         try {
@@ -93,12 +114,17 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
             throw  new GoogleDriveVideoDownloadException(StatusCode.GOOGLE_DRIVE_VIDEO_DOWNLOAD_ERROR, e.getMessage());
         }
 
+
+        log.info("\t \t Converting video to images..");
+
         List<BufferedImage> imageList = null;
         try {
             imageList = VideoUtil.videoToImages(outputFilePath);
         } catch (Exception e) {
             throw new VideoConversionException(StatusCode.VIDEO_CONVERSION_ERROR, e.getMessage());
         }
+
+        log.info("\t \t Cleaning up temp file saved locally..");
 
         File file = new File(outputFilePath);
         boolean deleted = file.delete();
