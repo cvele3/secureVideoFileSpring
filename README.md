@@ -44,7 +44,7 @@ Configuring the Spring service is a straightforward process that can be accompli
 2. Add the downloaded client-secret.json file to the project folder.
 3. Run the application.
 4. You will receive a URL in terminal that will take you to sign up with the Gmail account that you used in the Google Drive API setup.
-
+![urlGoogleDrive](https://user-images.githubusercontent.com/78024969/231885492-6c5be1ad-e68e-471a-80ee-f1bbf09ddc54.png)
 5. Your credentials will be stored in the driveCredentials folder.
 6. Congratulations! You are all set and ready to use the service.
 
@@ -65,6 +65,10 @@ Configuring the Spring service is a straightforward process that can be accompli
     * converting binary image list to byte array
     * decrypting file using password
     * receiving file as a byte array
+    
+## Example of video on Google Drive
+
+     ![ezgif com-gif-maker](https://user-images.githubusercontent.com/78024969/231885772-a745c6fc-5810-477b-bb5e-8e8b7cd3cd1a.gif)
 
 ## All Secure Video File repositories
 
