@@ -1,13 +1,82 @@
 # SecureVideoFileSpring
 ## About
+
 Secure Video File service is a powerful tool that enables users to keep their valuable files safe and secure. It uses advanced encryption and file signing techniques to protect zip files, which are then transformed into black and white pixel videos. This service allows users to store all their sensitive data in encrypted videos that can only be accessed by authorized users, providing a unique and innovative solution for secure data storage and sharing. With Secure Video File, users can have confidence in the safety and protection of their important files.
 
+
 ## Tools needed to setup application
+
 Java 17 -> [JDK 17 download link](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 > **Note:** You can also use newer version of JDK
 
 Apache Maven 3.9.1 -> [download link](https://maven.apache.org/download.cgi)
+
 ## List of all dependencies
+
+* **Spring Boot Starter Web** => Starter for testing Spring Boot applications
+* **Spring Boot Starter Test** => Starter for building web applications using Spring MVC
+* **Project Lombok** => Automatic Resource Management
+* **SpringDoc OpenAPI UI** => Automating generation of API documentation
+* **JavaFX Controls** => Control functionality inside a JavaFX application
+* **JCodec** => Pure Java implementation of video/audio codecs and formats
+* **GroupDocs.Comparison Java** => Finds differences between two revisions of a document
+* **Google APIs Client Library For Java** => Provides functionality common to all Google APIs
+* **Google Drive API** => Provides access to Google Drive cloud storage
+* **OAuth Verification For Google** => Used for user authentication
+
+## Google Auth Setup
+![step1](https://user-images.githubusercontent.com/77991435/230670446-154b1381-1d7d-4157-8f15-cd6823be63f2.png)
+
+![step2](https://user-images.githubusercontent.com/77991435/230670633-41318582-6b53-4b26-85ad-37c9de8b4d1e.png)
+
+![step3](https://user-images.githubusercontent.com/77991435/230670672-27af7bf8-6b3b-49fe-84a3-8107668bd735.png)
+
+![step4](https://user-images.githubusercontent.com/77991435/230670780-11fd8467-1f6f-4cfb-b384-195e96e10e06.png)
+
+![step5](https://user-images.githubusercontent.com/77991435/230670819-9ee769aa-c515-40ae-9aff-c6b1321dde44.png)
+
+![step6](https://user-images.githubusercontent.com/77991435/230670937-ed32205e-4825-42aa-afaa-01acd3e04a7f.png)
+
+## Spring Application Setup
+Configuring the Spring service is a straightforward process that can be accomplished in a few simple steps:
+
+1. Clone the project from GitHub, and navigate to the project folder.
+2. Add the downloaded client-secret.json file to the project folder.
+3. Run the application.
+4. You will receive a URL in terminal that will take you to sign up with the Gmail account that you used in the Google Drive API setup.
+
+5. Your credentials will be stored in the driveCredentials folder.
+6. Congratulations! You are all set and ready to use the service.
+
+## Application flows
+
+1. **Encrypting file**
+
+      * sending zipped file on Spring service
+      * encrypting file using password
+      * creating binary images from encrypted byte array
+      * generating video from image list
+      * uploading generated video to Google Drive
+
+ 2. **Decrypting file**
+ 
+    * fetching video from Google Drive using video name or video url
+    * converting video to binary image list
+    * converting binary image list to byte array
+    * decrypting file using password
+    * receiving file as a byte array
+
+## All Secure Video File repositories
+
+- https://github.com/Realman78/SecureVideoFile-web
+- https://github.com/Realman78/SecureVideoFile-API
+- https://github.com/cvele3/SecureVideoFile
+- https://github.com/cvele3/secureVideoFileSpring
+
+## Contacts
+
+Contact us for further inquiries about Secure Video File service
+- securevideofile@gmail.com
 
 
 
