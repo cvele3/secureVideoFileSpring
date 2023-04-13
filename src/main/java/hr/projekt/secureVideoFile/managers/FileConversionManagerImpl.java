@@ -72,4 +72,51 @@ public class FileConversionManagerImpl implements FileConversionManager {
 
         return URL;
     }
+
+    @Override
+    public Pair<String, String> convertFileToSignedVideoAndGetURLAndVideoName(MultipartFile file, String password, String name) {
+        log.info("Conversion of file to signed video.");
+
+        log.info("\t 1.Converting and encrypting file to binary images..");
+        Pair<List<BufferedImage>, String> imagesAndName = fileConversionService.convertFileToImageList(file, password, name);
+
+        log.info("\t 2. Converting images to video and uploading to Google Drive..");
+        Pair<String, String> urlAndNamePair = googleDriveService.imageListToVideoAndToGoogleDriveURLAndVideoName(imagesAndName.getKey(), imagesAndName.getValue());
+
+        log.info("\t    Conversion finished!");
+
+        return urlAndNamePair;
+    }
+
+    @Override
+    public byte[] convertSignedVideoToFileUsingURLAndVideoName(String videoName, String password, String URL) {
+        log.info("Getting file from signed uploaded video.");
+
+        log.info("\t 1. Downloading video from google disk and converting to images..");
+        List<BufferedImage> imageList = googleDriveService.videoFromGoogleDriveToImageListUsingURLAndVideoName(URL, videoName);
+
+        log.info("\t 2. Decrypting images and converting them to a file..");
+        byte[] fileContent = fileConversionService.convertImageListToFile(imageList, password, videoName);
+
+        log.info("\t    Retrieving file from Google Drive finished!");
+
+
+        return fileContent;
+    }
+
+    @Override
+    public byte[] convertSignedVideoToFileUsingURL(String password, String URL) {
+        log.info("Getting file from signed uploaded video.");
+
+        log.info("\t 1. Downloading video from google disk and converting to images..");
+        Pair<List<BufferedImage>, String> imageAndData = googleDriveService.videoFromGoogleDriveToImageListUsingURL(URL);
+
+        log.info("\t 2. Decrypting images and converting them to a file..");
+        byte[] fileContent = fileConversionService.convertImageListToFile(imageAndData.getKey(), password, imageAndData.getValue());
+
+        log.info("\t    Retrieving file from Google Drive finished!");
+
+
+        return fileContent;
+    }
 }
