@@ -53,7 +53,7 @@ public class FIleInputController {
     }
 
     @Operation(summary = "Convert input file", description = "Convert input file to video using password based encryption")
-    @GetMapping(path = "/hello")
+    @GetMapping(path = PathParamConstants.HELLO_TEST)
     public ResponseEntity<String> sayHello() {
         log.info("sayHello endpoint entered");
 
