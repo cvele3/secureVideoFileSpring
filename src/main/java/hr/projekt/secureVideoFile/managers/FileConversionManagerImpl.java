@@ -57,4 +57,19 @@ public class FileConversionManagerImpl implements FileConversionManager {
 
         return fileContent;
     }
+
+    @Override
+    public String convertFileToSignedVideoAndGetURL(MultipartFile file, String password, String name) {
+        log.info("Conversion of file to signed video.");
+
+        log.info("\t 1.Converting and encrypting file to binary images..");
+        Pair<List<BufferedImage>, String> imagesAndName = fileConversionService.convertFileToImageList(file, password, name);
+
+        log.info("\t 2. Converting images to video and uploading to Google Drive..");
+        String URL = googleDriveService.imageListToVideoAndToGoogleDriveURL(imagesAndName.getKey(), imagesAndName.getValue());
+
+        log.info("\t    Conversion finished!");
+
+        return URL;
+    }
 }

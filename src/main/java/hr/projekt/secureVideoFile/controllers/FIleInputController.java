@@ -60,4 +60,15 @@ public class FIleInputController {
 
         return ResponseEntity.ok(new String("Hello world"));
     }
+
+    @Operation(summary = "Convert input file", description = "Convert input file to video using password based encryption")
+    @PostMapping(path = PathParamConstants.UPLOAD_FILE_AND_GET_URL)
+    public ResponseEntity<String> uploadFileAndGetURL(@RequestParam("file") MultipartFile file, @RequestParam("password") String password, @RequestParam("name") String name) throws IOException {
+        log.info("uploadFileAndGetURL endpoint entered");
+
+        String URL = fileConversionManager.convertFileToSignedVideoAndGetURL(file, password, name);
+
+
+        return ResponseEntity.ok(URL);
+    }
 }
