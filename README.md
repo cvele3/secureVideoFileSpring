@@ -68,7 +68,7 @@ Configuring the Spring service is a straightforward process that can be accompli
     
 ## Example of video on Google Drive
 
-     ![ezgif com-gif-maker](https://user-images.githubusercontent.com/78024969/231885772-a745c6fc-5810-477b-bb5e-8e8b7cd3cd1a.gif)
+![ezgif](https://user-images.githubusercontent.com/78024969/231885772-a745c6fc-5810-477b-bb5e-8e8b7cd3cd1a.gif)
 
 ## All Secure Video File repositories
 
