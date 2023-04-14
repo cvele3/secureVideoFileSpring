@@ -145,7 +145,7 @@ The code above enables connection to Google Drive service. Successful authorizat
 
 ## List of Tasks
 
-* [ENG] - Conversion Service Implementation @icon-check
+- [x] [ENG] - Conversion Service Implementation
 * [ENG] - Conversion Utils Implementation @icon-check
 * [ENG] - Conversion Manager Implementation @icon-check
 * [ENG] - Connecting Spring To Google Disk @icon-check
