@@ -146,22 +146,22 @@ The code above enables connection to Google Drive service. Successful authorizat
 ## List of Tasks
 
 - [x] [ENG] - Conversion Service Implementation
-* [ENG] - Conversion Utils Implementation @icon-check
-* [ENG] - Conversion Manager Implementation @icon-check
-* [ENG] - Connecting Spring To Google Disk @icon-check
-* [ENG] - Conversion Flow Connection @icon-check
-* [ENG] - Create and handle exceptions @icon-check
-* [ENG] - Constants and Documentation @icon-check
-* [ENG] - Preparing spring service for API comunication @icon-check
-* [ENG] - Conversion Controller Implementation @icon-check
-* [DOC] - Spring README file
-* [DOC] - Spring repository wiki
-* [DOC] - Adding logs and variable documentation
-* [API] - File CRUD
-* [API] - User CRUD
-* [API] - Server Deployment
-* [WEB] - Figma UI design
-* [MOB] - Figma UI design
+- [x] [ENG] - Conversion Utils Implementation
+- [x] [ENG] - Conversion Manager Implementation
+- [x] [ENG] - Connecting Spring To Google Disk
+- [x] [ENG] - Conversion Flow Connection
+- [x] [ENG] - Create and handle exceptions
+- [x] [ENG] - Constants and Documentation
+- [x] [ENG] - Preparing spring service for API comunication
+- [x] [ENG] - Conversion Controller Implementation
+- [ ] [DOC] - Spring README file
+- [ ] [DOC] - Spring repository wiki
+- [ ] [DOC] - Adding logs and variable documentation
+- [ ] [API] - File CRUD
+- [ ] [API] - User CRUD
+- [ ] [API] - Server Deployment
+- [ ] [WEB] - Figma UI design
+- [ ] [MOB] - Figma UI design
 
 > * **[ENG]:** backend(engine)
 > * **[API]:** application programming interface
