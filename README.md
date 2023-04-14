@@ -70,6 +70,11 @@ Configuring the Spring service is a straightforward process that can be accompli
 
 ![ezgif](https://user-images.githubusercontent.com/78024969/231885772-a745c6fc-5810-477b-bb5e-8e8b7cd3cd1a.gif)
 
+## Upload and retrieve of video via Postman
+
+![upload](https://user-images.githubusercontent.com/78024969/232131465-06aea36a-d397-4f43-b641-458b9dba08ad.png)
+![retrieve](https://user-images.githubusercontent.com/78024969/232131504-bad4aaca-3846-427f-92a1-4a8cd636f46d.png)
+
 ## All Secure Video File repositories
 
 - https://github.com/Realman78/SecureVideoFile-web
