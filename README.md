@@ -73,7 +73,100 @@ Configuring the Spring service is a straightforward process that can be accompli
 ## Upload and retrieve of video via Postman
 
 ![upload](https://user-images.githubusercontent.com/78024969/232131465-06aea36a-d397-4f43-b641-458b9dba08ad.png)
+
+Image above shows request being sent on Spring service with following parameters:
+1. password -> used for encrypting file
+2. name -> used for naming video on Google Drive
+
+Response contains name of video stored on Google Drive. Number in video name simbolizes number of useful bytes in video.
+
 ![retrieve](https://user-images.githubusercontent.com/78024969/232131504-bad4aaca-3846-427f-92a1-4a8cd636f46d.png)
+
+Image above shows request being sent on Spring service with following parameters:
+1. password -> used for decrypting file
+2. name -> used for finding video on Google Drive
+
+Response contains compressed byte array of zipped file.
+
+## Example of complex code
+
+```java
+private Drive initializeDrive(){
+		JsonFactory jsonFactory = new GsonFactory();
+
+		NetHttpTransport httpTransport = null;
+		try {
+			httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+		} catch (Exception e) {
+			throw new HttpTransportException(StatusCode.HTTP_TRANSPORT_ERROR, e.getMessage());
+		}
+
+
+		File file = new File("client_secret.json");
+		GoogleClientSecrets clientSecrets = null;
+		try {
+			FileInputStream in = new FileInputStream(file);
+			clientSecrets = GoogleClientSecrets.load(jsonFactory, new InputStreamReader(in));
+		} catch (IOException e) {
+			throw new GoogleDriveInitializationException(StatusCode.GOOGLE_DRIVE_INITIALIZATION_ERROR, e.getMessage());
+		}
+
+		GoogleAuthorizationCodeFlow flow = null;
+		try {
+			flow = new GoogleAuthorizationCodeFlow.Builder(
+					httpTransport,
+					jsonFactory,
+					clientSecrets,
+					Collections.singletonList(DriveScopes.DRIVE)
+			)
+					.setDataStoreFactory(new FileDataStoreFactory(new File("driveCredentials")))
+					.setAccessType("offline")
+					.build();
+		} catch (IOException e) {
+			throw new GoogleDriveInitializationException(StatusCode.GOOGLE_DRIVE_INITIALIZATION_ERROR, e.getMessage());
+		}
+
+		LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+		Credential credential = null;
+		try {
+			credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+		} catch (IOException e) {
+			throw new GoogleDriveInitializationException(StatusCode.GOOGLE_DRIVE_INITIALIZATION_ERROR, e.getMessage());
+		}
+
+
+		return new Drive.Builder(httpTransport, jsonFactory, credential)
+				.setApplicationName("my-comparison-application")
+				.build();
+
+	}
+```  
+The code above enables connection to Google Drive service. Successful authorization is possible if there is client_secret.json file with dedicated values and StoredCredentials file in driveCredentials. In case there is no StoredCredentials file, user receives URL where he can log and thus create StoredCredentials file. With StoredCredentials file, there is no need for repeated authorization every time user access application.
+
+## List of Tasks
+
+* [ENG] - Conversion Service Implementation @icon-check
+* [ENG] - Conversion Utils Implementation @icon-check
+* [ENG] - Conversion Manager Implementation @icon-check
+* [ENG] - Connecting Spring To Google Disk @icon-check
+* [ENG] - Conversion Flow Connection @icon-check
+* [ENG] - Create and handle exceptions @icon-check
+* [ENG] - Constants and Documentation @icon-check
+* [ENG] - Preparing spring service for API comunication @icon-check
+* [ENG] - Conversion Controller Implementation @icon-check
+* [DOC] - Spring README file
+* [DOC] - Spring repository wiki
+* [DOC] - Adding logs and variable documentation
+* [API] - File CRUD
+* [API] - User CRUD
+* [API] - Server Deployment
+* [WEB] - Figma UI design
+* [MOB] - Figma UI design
+
+> * **[ENG]:** backend(engine)
+> * **[API]:** application programming interface
+> * **[WEB]:** frontend(GUI)
+> * **[MOB]:** mobile development
 
 ## All Secure Video File repositories
 
