@@ -1,5 +1,6 @@
 package hr.projekt.secureVideoFile.utils;
 
+import hr.projekt.secureVideoFile.constants.EncryptionTypesConstants;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,14 +28,14 @@ public class FileEncryptionUtil {
 
         //Use a KeyFactory to derive the corresponding key from the passphrase:
         PBEKeySpec keySpec = new PBEKeySpec(pass.toCharArray());
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(EncryptionTypesConstants.PBEWithMD5AndDES);
         SecretKey key = keyFactory.generateSecret(keySpec);
 
         //Create parameters from the salt and an arbitrary number of iterations:
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 42);
 
         //Set up the cipher:
-        Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
+        Cipher cipher = Cipher.getInstance(EncryptionTypesConstants.PBEWithMD5AndDES);
 
         //Set the cipher mode to decryption or encryption:
         if (decryptMode) {

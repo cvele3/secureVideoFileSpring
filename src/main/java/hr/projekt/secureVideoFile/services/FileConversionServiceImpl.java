@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,20 +24,24 @@ public class FileConversionServiceImpl implements FileConversionService{
     @Override
     public Pair<List<BufferedImage>, String> convertFileToImageList(MultipartFile file, String password, String name) {
 
-        // Get byte[] from MultipartFile
+        log.info("\t \t Getting bytes from file and encrypting them..");
+
         byte[] fileContent = ByteArrayUtil.readMultipartFileToByteArray(file);
 
-        // Encrypt byte[]
         try {
             fileContent = FileEncryptionUtil.encryptFile(fileContent, password);
         } catch (GeneralSecurityException e) {
             throw new FileEncryptionException(StatusCode.FILE_ENCRYPTION_ERROR,e.getMessage());
         }
 
-        // Convert encrypted byte[] to binary string
+        log.info("\t \t Converting encrypted bytes to binary string..");
+
         String binaryString = ByteArrayUtil.toBinaryString(fileContent);
         int totalPixels = binaryString.length();
         String videoName = name + "-" + totalPixels;
+
+        log.info("\t \t Converting binary string to buffered images..");
+
 
         // Adjusting images
         int[] imageData = ImageUtil.calculateMultiplication(totalPixels, ImageConstants.TARGET_WIDTH, ImageConstants.TARGET_HEIGHT);
@@ -66,7 +69,10 @@ public class FileConversionServiceImpl implements FileConversionService{
 
     @Override
     public byte[] convertImageListToFile(List<BufferedImage> listOfImages, String password, String videoName) {
-        // Read each image and convert to binary string
+
+        log.info("\t \t Converting images to binary string..");
+
+
         StringBuilder sb = new StringBuilder();
         int totalPixels = extractNumber(videoName);
 
@@ -75,10 +81,12 @@ public class FileConversionServiceImpl implements FileConversionService{
         String binaryString2 = sb.toString();
         binaryString2 = binaryString2.substring(0, totalPixels);
 
-        // Convert binary string to byte array
+        log.info("\t \t Converting binary string to bytes..");
+
         byte[] fileContent = BinaryUtil.fromBinaryString(binaryString2);
 
-        // Decrypt File byte[]
+        log.info("\t \t Decrypting bytes..");
+
         try {
             fileContent = FileEncryptionUtil.decryptFile(fileContent, password);
         } catch (Exception e) {
