@@ -65,7 +65,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
 
         log.info("\t \t Uploading file to Google Drive..");
 
-        // Upload the file to Google Drive
         com.google.api.services.drive.model.File uploadedFile = null;
         try {
             uploadedFile = service.files()
@@ -79,7 +78,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
 
         log.info("\t \t Cleaning up temp file saved locally..");
 
-        // Delete the file after uploading to Google Drive
         boolean deleted = file.delete();
         if (!deleted) {
             throw new FileManipulationException(StatusCode.FILE_DELETION_ERROR, "Error while deleting file");
@@ -139,7 +137,12 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
     @Override
     public String imageListToVideoAndToGoogleDriveURL(List<BufferedImage> imageList, String videoName) {
 
+        log.info("\t \t Initializing drive..");
+
         Drive service = initializeDrive();
+
+        log.info("\t \t Converting images to video..");
+
 
         try {
             VideoUtil.imagesToVideo(imageList, videoName + VideoConstants.VIDEO_FORMAT);
@@ -154,7 +157,9 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
         com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
         fileMetadata.setName(videoName + VideoConstants.VIDEO_FORMAT);
 
-        // Upload the file to Google Drive
+
+        log.info("\t \t Uploading video to Google Drive using Drive URL..");
+
         com.google.api.services.drive.model.File uploadedFile = null;
         try {
             uploadedFile = service.files()
@@ -165,7 +170,9 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
             throw new GoogleDriveUploadException(StatusCode.GOOGLE_DRIVE_UPLOAD_ERROR, e.getMessage());
         }
 
-        // Delete the file after uploading to Google Drive
+
+        log.info("\t \t Cleaning up temp file saved locally..");
+
         boolean deleted = file.delete();
         if (!deleted) {
             throw new FileManipulationException(StatusCode.FILE_DELETION_ERROR, "Error while deleting file");
@@ -178,7 +185,11 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
     @Override
     public Pair<String, String> imageListToVideoAndToGoogleDriveURLAndVideoName(List<BufferedImage> imageList, String videoName) {
 
+        log.info("\t \t Initializing drive..");
+
         Drive service = initializeDrive();
+
+        log.info("\t \t Converting images to video..");
 
         try {
             VideoUtil.imagesToVideo(imageList, videoName + VideoConstants.VIDEO_FORMAT);
@@ -193,7 +204,8 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
         com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
         fileMetadata.setName(videoName + VideoConstants.VIDEO_FORMAT);
 
-        // Upload the file to Google Drive
+        log.info("\t \t Uploading video to Google Drive using Drive URL and video name..");
+
         com.google.api.services.drive.model.File uploadedFile = null;
         try {
             uploadedFile = service.files()
@@ -204,7 +216,8 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
             throw new GoogleDriveUploadException(StatusCode.GOOGLE_DRIVE_UPLOAD_ERROR, e.getMessage());
         }
 
-        // Delete the file after uploading to Google Drive
+        log.info("\t \t Cleaning up temp file saved locally..");
+
         boolean deleted = file.delete();
         if (!deleted) {
             throw new FileManipulationException(StatusCode.FILE_DELETION_ERROR, "Error while deleting file");

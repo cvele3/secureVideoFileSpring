@@ -60,7 +60,7 @@ public class FileConversionManagerImpl implements FileConversionManager {
 
     @Override
     public String convertFileToSignedVideoAndGetURL(MultipartFile file, String password, String name) {
-        log.info("Conversion of file to signed video.");
+        log.info("Conversion of file to signed video and retrieving Drive url.");
 
         log.info("\t 1.Converting and encrypting file to binary images..");
         Pair<List<BufferedImage>, String> imagesAndName = fileConversionService.convertFileToImageList(file, password, name);
@@ -75,7 +75,7 @@ public class FileConversionManagerImpl implements FileConversionManager {
 
     @Override
     public Pair<String, String> convertFileToSignedVideoAndGetURLAndVideoName(MultipartFile file, String password, String name) {
-        log.info("Conversion of file to signed video.");
+        log.info("Conversion of file to signed video and retrieving Drive url and video name.");
 
         log.info("\t 1.Converting and encrypting file to binary images..");
         Pair<List<BufferedImage>, String> imagesAndName = fileConversionService.convertFileToImageList(file, password, name);
@@ -90,7 +90,7 @@ public class FileConversionManagerImpl implements FileConversionManager {
 
     @Override
     public byte[] convertSignedVideoToFileUsingURLAndVideoName(String videoName, String password, String URL) {
-        log.info("Getting file from signed uploaded video.");
+        log.info("Getting file from signed uploaded video using URL and video name.");
 
         log.info("\t 1. Downloading video from google disk and converting to images..");
         List<BufferedImage> imageList = googleDriveService.videoFromGoogleDriveToImageListUsingURLAndVideoName(URL, videoName);
@@ -106,7 +106,7 @@ public class FileConversionManagerImpl implements FileConversionManager {
 
     @Override
     public byte[] convertSignedVideoToFileUsingURL(String password, String URL) {
-        log.info("Getting file from signed uploaded video.");
+        log.info("Getting file from signed uploaded video using URL.");
 
         log.info("\t 1. Downloading video from google disk and converting to images..");
         Pair<List<BufferedImage>, String> imageAndData = googleDriveService.videoFromGoogleDriveToImageListUsingURL(URL);

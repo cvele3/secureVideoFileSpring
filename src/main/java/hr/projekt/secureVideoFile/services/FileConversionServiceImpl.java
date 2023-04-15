@@ -26,10 +26,8 @@ public class FileConversionServiceImpl implements FileConversionService{
 
         log.info("\t \t Getting bytes from file and encrypting them..");
 
-        // Get byte[] from MultipartFile
         byte[] fileContent = ByteArrayUtil.readMultipartFileToByteArray(file);
 
-        // Encrypt byte[]
         try {
             fileContent = FileEncryptionUtil.encryptFile(fileContent, password);
         } catch (GeneralSecurityException e) {
@@ -38,7 +36,6 @@ public class FileConversionServiceImpl implements FileConversionService{
 
         log.info("\t \t Converting encrypted bytes to binary string..");
 
-        // Convert encrypted byte[] to binary string
         String binaryString = ByteArrayUtil.toBinaryString(fileContent);
         int totalPixels = binaryString.length();
         String videoName = name + "-" + totalPixels;
@@ -76,7 +73,6 @@ public class FileConversionServiceImpl implements FileConversionService{
         log.info("\t \t Converting images to binary string..");
 
 
-        // Read each image and convert to binary string
         StringBuilder sb = new StringBuilder();
         int totalPixels = extractNumber(videoName);
 
@@ -87,12 +83,10 @@ public class FileConversionServiceImpl implements FileConversionService{
 
         log.info("\t \t Converting binary string to bytes..");
 
-        // Convert binary string to byte array
         byte[] fileContent = BinaryUtil.fromBinaryString(binaryString2);
 
         log.info("\t \t Decrypting bytes..");
 
-        // Decrypt File byte[]
         try {
             fileContent = FileEncryptionUtil.decryptFile(fileContent, password);
         } catch (Exception e) {
