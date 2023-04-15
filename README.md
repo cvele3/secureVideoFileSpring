@@ -154,9 +154,9 @@ The code above enables connection to Google Drive service. Successful authorizat
 - [x] [ENG] - Constants and Documentation
 - [x] [ENG] - Preparing spring service for API comunication
 - [x] [ENG] - Conversion Controller Implementation
-- [ ] [DOC] - Spring README file
-- [ ] [DOC] - Spring repository wiki
-- [ ] [DOC] - Adding logs and variable documentation
+- [x] [DOC] - Spring README file
+- [x] [DOC] - Spring repository wiki
+- [x] [DOC] - Adding logs and variable documentation
 - [ ] [API] - File CRUD
 - [ ] [API] - User CRUD
 - [ ] [API] - Server Deployment
