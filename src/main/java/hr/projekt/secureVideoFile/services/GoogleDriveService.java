@@ -60,4 +60,13 @@ public interface GoogleDriveService {
      * @return image list used later on for conversion to file
      */
     Pair<List<BufferedImage>, String> videoFromGoogleDriveToImageListUsingURL(String URL);
+
+
+    /**
+     * This method is used for deleting user videos
+     *
+     * @param videoUrls list of url string to user videos
+     * @return boolean depending on if deletion was successful
+     */
+    boolean deleteUserVideos(List<String> videoUrls);
 }

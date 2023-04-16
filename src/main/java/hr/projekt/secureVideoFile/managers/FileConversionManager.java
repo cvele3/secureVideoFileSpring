@@ -1,7 +1,10 @@
 package hr.projekt.secureVideoFile.managers;
 
+import hr.projekt.secureVideoFile.request.UserInfoRequest;
 import javafx.util.Pair;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 public interface FileConversionManager {
@@ -63,5 +66,13 @@ public interface FileConversionManager {
      * @return byte[] of original file
      */
     byte[] convertSignedVideoToFileUsingURL( String password, String URL);
+
+    /**
+     * This method is used for deleting user videos
+     *
+     * @param userInfoRequests list of user info request
+     * @return boolean depending on if deletion was successful
+     */
+    boolean deleteUserVideos(List<UserInfoRequest> userInfoRequests);
 
 }

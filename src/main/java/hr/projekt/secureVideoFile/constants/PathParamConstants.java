@@ -20,4 +20,6 @@ public class PathParamConstants {
 
     public static final String RETRIEVE_FILE_FROM_URL = "/retrieveUsingURL";
 
+    public static final String DELETE_USER_VIDEOS = "/deleteUserVideos";
+
 }

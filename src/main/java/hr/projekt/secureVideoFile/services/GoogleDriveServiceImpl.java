@@ -315,6 +315,30 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
         return new Pair<>(imageList, videoName);
     }
 
+    @Override
+    public boolean deleteUserVideos(List<String> videoUrls) {
+        log.info("\t \t Initializing drive..");
+        Drive service = initializeDrive();
+
+        for (String videoUrl : videoUrls) {
+            String fileId = extractFileIdFromUrl(videoUrl);
+            if (fileId == null) {
+                log.error("Failed to extract file ID from URL: " + videoUrl);
+                continue;
+            }
+
+            try {
+                log.info("\t \t Deleting video from Google Drive: " + videoUrl);
+                service.files().delete(fileId).execute();
+                log.info("\t \t Successfully deleted video from Google Drive: " + videoUrl);
+            } catch (IOException e) {
+                log.error("Error while deleting video from Google Drive: " + videoUrl, e);
+                throw new GoogleDriveDeleteException(StatusCode.GOOGLE_DRIVE_DELETE_ERROR, e.getMessage());
+            }
+        }
+        return true;
+    }
+
     private String extractFileIdFromUrl(String url) {
         int start = url.indexOf("d/") + 2;
         int end = url.indexOf("/view");
