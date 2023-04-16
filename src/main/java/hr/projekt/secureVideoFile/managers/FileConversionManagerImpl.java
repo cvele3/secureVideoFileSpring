@@ -1,5 +1,6 @@
 package hr.projekt.secureVideoFile.managers;
 
+import hr.projekt.secureVideoFile.request.UserInfoRequest;
 import hr.projekt.secureVideoFile.services.FileConversionService;
 import hr.projekt.secureVideoFile.services.GoogleDriveService;
 import javafx.util.Pair;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -118,5 +120,28 @@ public class FileConversionManagerImpl implements FileConversionManager {
 
 
         return fileContent;
+    }
+
+    @Override
+    public boolean deleteUserVideos(List<UserInfoRequest> userInfoRequests) {
+        log.info("Deleting user videos from urls");
+
+        log.info("\t 1. Retrieving user videos urls");
+        List<String> urls = videoUrls(userInfoRequests);
+
+        log.info("\t 2. Deleting user videos from urls");
+        Boolean deletionComplete = googleDriveService.deleteUserVideos(urls);
+
+        return deletionComplete;
+    }
+
+    List<String> videoUrls(List<UserInfoRequest> userInfoRequests){
+        List<String> urls = new ArrayList<>();
+
+        for(UserInfoRequest userInfoRequest : userInfoRequests){
+            urls.add(userInfoRequest.getUrl());
+        }
+
+        return urls;
     }
 }

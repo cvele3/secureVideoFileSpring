@@ -2,20 +2,20 @@ package hr.projekt.secureVideoFile.controllers;
 
 import hr.projekt.secureVideoFile.constants.PathParamConstants;
 import hr.projekt.secureVideoFile.managers.FileConversionManager;
+import hr.projekt.secureVideoFile.request.UserInfoRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import javafx.util.Pair;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -105,5 +105,15 @@ public class FIleInputController {
 
 
         return ResponseEntity.ok(fileContent.toString());
+    }
+
+    @Operation(summary = "Delete user videos", description = "Delete user videos using user info")
+    @DeleteMapping(path = PathParamConstants.DELETE_USER_VIDEOS)
+    public ResponseEntity<Boolean> deleteUserVideos(@RequestBody @Valid List<UserInfoRequest> userInfoRequests) {
+        log.info("retrieveFile endpoint entered");
+
+        Boolean deletionCompleted = fileConversionManager.deleteUserVideos(userInfoRequests);
+
+        return ResponseEntity.ok(deletionCompleted);
     }
 }
