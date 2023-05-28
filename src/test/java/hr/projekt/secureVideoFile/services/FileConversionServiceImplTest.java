@@ -21,8 +21,6 @@ public class FileConversionServiceImplTest {
 
     @InjectMocks
     private FileConversionServiceImpl fileConversionService;
-    @Mock
-    private MultipartFile multipartFile;
 
     public FileConversionServiceImplTest() {
         MockitoAnnotations.openMocks(this);
