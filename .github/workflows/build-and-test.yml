@@ -33,7 +33,3 @@ jobs:
         run: mvn package -DskipTests
       - name: Run Spring Boot Application
         run: java -jar target/my-spring-boot-app.jar
-      - name: Send Notifications
-        uses: actions/slack@v3
-        with:
-          message: 'Build and test completed successfully!'
