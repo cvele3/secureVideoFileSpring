@@ -1,18 +1,24 @@
 name: Build and Test
+
 on:
+  pull_request:
   push:
-    branches-ignore:
-      - '*'
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.ref }}-group
+  cancel-in-progress: true
+
 jobs:
-  build:
+  default:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Java
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
+          distribution: 'temurin'
       - name: Build with Maven
         run: mvn clean package
       - name: Run Tests
