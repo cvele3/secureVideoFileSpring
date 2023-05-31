@@ -20,5 +20,20 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
+      - name: Set up Maven
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          maven-version: '3.8.x'
+      - name: Build with Maven
+        run: mvn clean install
       - name: Run Tests
         run: mvn test
+      - name: Package Spring Boot Application
+        run: mvn package -DskipTests
+      - name: Run Spring Boot Application
+        run: java -jar target/my-spring-boot-app.jar
+      - name: Send Notifications
+        uses: actions/slack@v3
+        with:
+          message: 'Build and test completed successfully!'
