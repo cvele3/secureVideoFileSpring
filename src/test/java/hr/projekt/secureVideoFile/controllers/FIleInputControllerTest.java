@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
@@ -112,18 +113,23 @@ class FIleInputControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
         // Perform the request
-        ResultActions resultActions = mockMvc.perform(multipart(PathParamConstants.UPLOAD_FILE_AND_GET_URL)
-                .file(file)
-                .param("password", "sample_password")
-                .param("name", "sample_name"));
+        ResultActions resultActions = mockMvc.perform(
+                multipart(PathParamConstants.UPLOAD_FILE_AND_GET_URL)
+                        .file(file)
+                        .param("password", "sample_password")
+                        .param("name", "sample_name")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer your_token_here")
+        );
 
         // Verify the response
-        resultActions.andExpect(status().isOk())
+        resultActions
+                .andExpect(status().isOk())
                 .andExpect(content().string(expectedURL));
 
         // Verify the conversion method invocation
         verify(fileConversionManager, times(1)).convertFileToSignedVideoAndGetURL(eq(file), eq("sample_password"), eq("sample_name"));
     }
+
 
     @Test
     public void testUploadFileAndGetURLAndVideoName() throws Exception {
