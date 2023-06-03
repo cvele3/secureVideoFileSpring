@@ -7,8 +7,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import javafx.util.Pair;
 import lombok.extern.log4j.Log4j2;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -69,10 +74,29 @@ public class FIleInputController {
     public ResponseEntity<String> uploadFileAndGetURL(@RequestParam("file") MultipartFile file, @RequestParam("password") String password, @RequestParam("name") String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
         log.info("uploadFileAndGetURL endpoint entered");
 
-        String URL = fileConversionManager.convertFileToSignedVideoAndGetURL(file, password, name);
+        System.out.println(authorizationHeader);
 
 
-        return ResponseEntity.ok(URL);
+        String url = "http://localhost:3000/api/auth/get/me";
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+            System.out.println(response.getStatusLine());
+            if (response.getStatusLine().getStatusCode() == 200) {
+                String URL = fileConversionManager.convertFileToSignedVideoAndGetURL(file, password, name);
+                return ResponseEntity.ok(URL);
+            }
+            else if (response.getStatusLine().getStatusCode() == 401) {
+                return new ResponseEntity<String>("Unsuccessful authorization", HttpStatus.UNAUTHORIZED);
+            }
+            else {
+                return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);
+            }
+        }
     }
 
     @Operation(summary = "Convert input file", description = "Convert input file to video using password based encryption")
