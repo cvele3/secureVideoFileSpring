@@ -124,21 +124,38 @@ public class FIleInputController {
 
     @Operation(summary = "Convert video to file", description = "Convert video from drive to original file")
     @PostMapping(path = PathParamConstants.RETRIEVE_FILE_FROM_URL)
-    public ResponseEntity<StreamingResponseBody> retrieveFileFromURL(@RequestParam("password") String password, @RequestParam("URL") String URL) throws IOException {
+    public ResponseEntity<StreamingResponseBody> retrieveFileFromURL(@RequestParam("password") String password, @RequestParam("URL") String URL, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
         log.info("retrieveFile endpoint entered");
 
-        byte[] fileContent = fileConversionManager.convertSignedVideoToFileUsingURL(password, URL);
+        String url = "http://localhost:3000/api/auth/get/me";
+        String token = authorizationHeader.replace("Bearer ", "");
 
-        StreamingResponseBody responseBody = outputStream -> {
-            outputStream.write(fileContent);
-            outputStream.flush();
-        };
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"file.bin\"")
-                .body(responseBody);
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+            System.out.println(response.getStatusLine());
+            if (response.getStatusLine().getStatusCode() == 200) {
+                byte[] fileContent = fileConversionManager.convertSignedVideoToFileUsingURL(password, URL);
+
+                StreamingResponseBody responseBody = outputStream -> {
+                    outputStream.write(fileContent);
+                    outputStream.flush();
+                };
+
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"file.bin\"")
+                        .body(responseBody);
+            }
+            else if (response.getStatusLine().getStatusCode() == 401) {
+                return new ResponseEntity<StreamingResponseBody>(outputStream -> {}, HttpStatus.UNAUTHORIZED);
+            }
+            else {
+                return new ResponseEntity<StreamingResponseBody>(outputStream -> {}, HttpStatus.BAD_REQUEST);
+            }
+        }
     }
-
 
     @Operation(summary = "Delete user videos", description = "Delete user videos using user info")
     @DeleteMapping(path = PathParamConstants.DELETE_USER_VIDEOS)
