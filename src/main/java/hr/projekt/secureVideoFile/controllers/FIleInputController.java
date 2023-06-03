@@ -142,11 +142,32 @@ public class FIleInputController {
 
     @Operation(summary = "Delete user videos", description = "Delete user videos using user info")
     @DeleteMapping(path = PathParamConstants.DELETE_USER_VIDEOS)
-    public ResponseEntity<Boolean> deleteUserVideos(@RequestBody @Valid List<UserInfoRequest> userInfoRequests) {
+    public ResponseEntity<String> deleteUserVideos(@RequestBody @Valid List<UserInfoRequest> userInfoRequests, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
         log.info("retrieveFile endpoint entered");
 
-        Boolean deletionCompleted = fileConversionManager.deleteUserVideos(userInfoRequests);
+        System.out.println(authorizationHeader);
 
-        return ResponseEntity.ok(deletionCompleted);
+
+        String url = "http://localhost:3000/api/auth/get/me";
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+            System.out.println(response.getStatusLine());
+            if (response.getStatusLine().getStatusCode() == 200) {
+                Boolean deletionCompleted = fileConversionManager.deleteUserVideos(userInfoRequests);
+                if (deletionCompleted) {
+                    return new ResponseEntity<String>("Successful deletion", HttpStatus.OK);
+                }
+                return new ResponseEntity<String>("Unsuccessful deletion", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            else if (response.getStatusLine().getStatusCode() == 401) {
+                return new ResponseEntity<String>("Unsuccessful authorization", HttpStatus.UNAUTHORIZED);            }
+            else {
+                return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);            }
+        }
     }
 }
