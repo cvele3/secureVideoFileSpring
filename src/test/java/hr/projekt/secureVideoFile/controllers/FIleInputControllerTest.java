@@ -118,7 +118,7 @@ class FIleInputControllerTest {
                         .file(file)
                         .param("password", "sample_password")
                         .param("name", "sample_name")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer your_token_here")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDdhNGM5MDM2MzA1MWE0OWJmM2Y3ODEiLCJtYWlsIjoic2VjdXJldmlkZW9maWxlQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoibGV2cm9uZSIsInN0YXR1cyI6IkFjdGl2ZSIsImlhdCI6MTY4NTc3NzQ4MywiZXhwIjoxNjg4MzY5NDgzfQ.dhP4W2ub02pXMcvDOC9IYTcD55_3oL3Am8xEpmK6Z3U")
         );
 
         // Verify the response
@@ -128,6 +128,28 @@ class FIleInputControllerTest {
 
         // Verify the conversion method invocation
         verify(fileConversionManager, times(1)).convertFileToSignedVideoAndGetURL(eq(file), eq("sample_password"), eq("sample_name"));
+    }
+
+    @Test
+    public void testUploadFileAndGetURLUnauthorized() throws Exception {
+
+        // Create a mock file to upload
+        MockMultipartFile file = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
+
+        // Perform the request
+        ResultActions resultActions = mockMvc.perform(
+                multipart(PathParamConstants.UPLOAD_FILE_AND_GET_URL)
+                        .file(file)
+                        .param("password", "sample_password")
+                        .param("name", "sample_name")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer test")
+        );
+
+        // Verify the response
+        resultActions
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().string("Unsuccessful authorization"));
+
     }
 
 
@@ -191,13 +213,30 @@ class FIleInputControllerTest {
         // Perform the request
         ResultActions resultActions = mockMvc.perform(post(PathParamConstants.RETRIEVE_FILE_FROM_URL)
                 .param("password", "sample_password")
-                .param("URL", "https://example.com/sample-video.mp4"));
+                .param("URL", "https://example.com/sample-video.mp4")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDdhNGM5MDM2MzA1MWE0OWJmM2Y3ODEiLCJtYWlsIjoic2VjdXJldmlkZW9maWxlQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoibGV2cm9uZSIsInN0YXR1cyI6IkFjdGl2ZSIsImlhdCI6MTY4NTc3NzQ4MywiZXhwIjoxNjg4MzY5NDgzfQ.dhP4W2ub02pXMcvDOC9IYTcD55_3oL3Am8xEpmK6Z3U"));
+
 
         // Verify the response
         resultActions.andExpect(status().isOk());
 
         // Verify the conversion method invocation
         verify(fileConversionManager, times(1)).convertSignedVideoToFileUsingURL(eq("sample_password"), eq("https://example.com/sample-video.mp4"));
+    }
+
+    @Test
+    public void testRetrieveFileFromURLUnathorized() throws Exception {
+
+        // Perform the request
+        ResultActions resultActions = mockMvc.perform(post(PathParamConstants.RETRIEVE_FILE_FROM_URL)
+                .param("password", "sample_password")
+                .param("URL", "https://example.com/sample-video.mp4")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer test"));
+
+
+        // Verify the response
+        resultActions.andExpect(status().isUnauthorized());
+
     }
 
     @Test
@@ -217,14 +256,37 @@ class FIleInputControllerTest {
         // Perform the request
         ResultActions resultActions = mockMvc.perform(delete(PathParamConstants.DELETE_USER_VIDEOS)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJson(userInfoRequests)));
+                .content(convertObjectToJson(userInfoRequests))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDdhNGM5MDM2MzA1MWE0OWJmM2Y3ODEiLCJtYWlsIjoic2VjdXJldmlkZW9maWxlQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoibGV2cm9uZSIsInN0YXR1cyI6IkFjdGl2ZSIsImlhdCI6MTY4NTc3NzQ4MywiZXhwIjoxNjg4MzY5NDgzfQ.dhP4W2ub02pXMcvDOC9IYTcD55_3oL3Am8xEpmK6Z3U"));
 
         // Verify the response
         resultActions.andExpect(status().isOk())
-                .andExpect(content().string(String.valueOf(deletionCompleted)));
+                .andExpect(content().string("Successful deletion"));
 
         // Verify the deletion method invocation
         verify(fileConversionManager, times(1)).deleteUserVideos(eq(userInfoRequests));
+    }
+
+    @Test
+    public void testDeleteUserVideosUnauthorized() throws Exception {
+        // Prepare the request body
+        List<UserInfoRequest> userInfoRequests = new ArrayList<>();
+        UserInfoRequest userInfoRequest = new UserInfoRequest();
+        userInfoRequest.setOwner("sample_user");
+        userInfoRequest.setAccessCode("sample_video");
+        userInfoRequests.add(userInfoRequest);
+
+
+        // Perform the request
+        ResultActions resultActions = mockMvc.perform(delete(PathParamConstants.DELETE_USER_VIDEOS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJson(userInfoRequests))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer test"));
+
+        // Verify the response
+        resultActions.andExpect(status().isUnauthorized())
+                .andExpect(content().string("Unsuccessful authorization"));
+
     }
 
     private String convertObjectToJson(Object object) throws Exception {
