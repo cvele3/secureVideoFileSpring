@@ -103,7 +103,7 @@ class FIleInputControllerTest {
     }
 
 
-    @Tag("longResponse")
+
     @Test
     public void testUploadFileAndGetURL() throws Exception {
         // Mock the conversion result
@@ -132,7 +132,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertFileToSignedVideoAndGetURL(eq(file), eq("sample_password"), eq("sample_name"));
     }
 
-    @Tag("longResponse")
+
     @Test
     public void testUploadFileAndGetURLUnauthorized() throws Exception {
 
@@ -205,7 +205,7 @@ class FIleInputControllerTest {
     }
 
 
-    @Tag("longResponse")
+
     @Test
     public void testRetrieveFileFromURL() throws Exception {
         // Mock the conversion result
@@ -228,7 +228,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertSignedVideoToFileUsingURL(eq("sample_password"), eq("https://example.com/sample-video.mp4"));
     }
 
-    @Tag("longResponse")
+
     @Test
     public void testRetrieveFileFromURLUnathorized() throws Exception {
 
@@ -244,7 +244,7 @@ class FIleInputControllerTest {
 
     }
 
-    @Tag("longResponse")
+
     @Test
     public void testDeleteUserVideos() throws Exception {
         // Prepare the request body
@@ -273,7 +273,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).deleteUserVideos(eq(userInfoRequests));
     }
 
-    @Tag("longResponse")
+
     @Test
     public void testDeleteUserVideosUnauthorized() throws Exception {
         // Prepare the request body
