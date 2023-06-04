@@ -107,6 +107,7 @@ public class FIleInputController {
                 params.add(new BasicNameValuePair("accessCode", authorizationHeader));
 
                 httpPost.setEntity(new UrlEncodedFormEntity(params));
+                httpClient.execute(httpPost);
 
                 return ResponseEntity.ok(URL);
             }
