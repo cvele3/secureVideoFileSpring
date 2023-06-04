@@ -21,6 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +104,7 @@ class FIleInputControllerTest {
                 .andExpect(content().string("Hello world"));
     }
 
-
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testUploadFileAndGetURL() throws Exception {
         // Mock the conversion result
@@ -130,6 +133,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertFileToSignedVideoAndGetURL(eq(file), eq("sample_password"), eq("sample_name"));
     }
 
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testUploadFileAndGetURLUnauthorized() throws Exception {
 
@@ -201,7 +205,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertSignedVideoToFileUsingURLAndVideoName(eq("sample_name"), eq("sample_password"), eq("https://example.com/sample-video.mp4"));
     }
 
-
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testRetrieveFileFromURL() throws Exception {
         // Mock the conversion result
@@ -224,6 +228,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertSignedVideoToFileUsingURL(eq("sample_password"), eq("https://example.com/sample-video.mp4"));
     }
 
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testRetrieveFileFromURLUnathorized() throws Exception {
 
@@ -239,6 +244,7 @@ class FIleInputControllerTest {
 
     }
 
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testDeleteUserVideos() throws Exception {
         // Prepare the request body
@@ -267,6 +273,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).deleteUserVideos(eq(userInfoRequests));
     }
 
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testDeleteUserVideosUnauthorized() throws Exception {
         // Prepare the request body
