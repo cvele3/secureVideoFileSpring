@@ -7,8 +7,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import javafx.util.Pair;
 import lombok.extern.log4j.Log4j2;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +26,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -34,6 +44,7 @@ public class FIleInputController {
 
     @Operation(summary = "Convert input file", description = "Convert input file to video using password based encryption")
     @PostMapping(path = PathParamConstants.UPLOAD_FILE)
+    @CrossOrigin(origins = "*")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("password") String password, @RequestParam("name") String name) throws IOException {
         log.info("uploadFile endpoint entered");
         // Process the uploaded file here and convert it to an mp4 video
@@ -46,6 +57,7 @@ public class FIleInputController {
 
     @Operation(summary = "Convert video to file", description = "Convert video from drive to original file")
     @PostMapping(path = PathParamConstants.RETRIEVE_FILE)
+    @CrossOrigin(origins = "*")
     public ResponseEntity<String> retrieveFile(@RequestParam("password") String password, @RequestParam("name") String name) throws IOException {
         log.info("retrieveFile endpoint entered");
 
@@ -57,6 +69,7 @@ public class FIleInputController {
 
     @Operation(summary = "Convert input file", description = "Convert input file to video using password based encryption")
     @GetMapping(path = PathParamConstants.HELLO_TEST)
+    @CrossOrigin(origins = "*")
     public ResponseEntity<String> sayHello() {
         log.info("sayHello endpoint entered");
 
@@ -66,17 +79,49 @@ public class FIleInputController {
 
     @Operation(summary = "Convert input file", description = "Convert input file to video using password based encryption")
     @PostMapping(path = PathParamConstants.UPLOAD_FILE_AND_GET_URL)
-    public ResponseEntity<String> uploadFileAndGetURL(@RequestParam("file") MultipartFile file, @RequestParam("password") String password, @RequestParam("name") String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<String> uploadFileAndGetURL(@RequestPart("file") MultipartFile file, @RequestParam("password") String password, @RequestParam("name") String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
         log.info("uploadFileAndGetURL endpoint entered");
 
-        String URL = fileConversionManager.convertFileToSignedVideoAndGetURL(file, password, name);
+        System.out.println(authorizationHeader);
 
 
-        return ResponseEntity.ok(URL);
+        String url = "http://localhost:3000/api/auth/get/me";
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+            System.out.println(response.getStatusLine());
+            if (response.getStatusLine().getStatusCode() == 200) {
+                String saveVideoEndpoint = "http://localhost:3000/api/file/create";
+                String URL = fileConversionManager.convertFileToSignedVideoAndGetURL(file, password, name);
+                HttpPost httpPost = new HttpPost(saveVideoEndpoint);
+                httpPost.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+                List<NameValuePair> params = new ArrayList<>();
+                params.add(new BasicNameValuePair("url", URL));
+                params.add(new BasicNameValuePair("name", name));
+                params.add(new BasicNameValuePair("accessCode", authorizationHeader));
+
+                httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+                return ResponseEntity.ok(URL);
+            }
+            else if (response.getStatusLine().getStatusCode() == 401) {
+                return new ResponseEntity<String>("Unsuccessful authorization", HttpStatus.UNAUTHORIZED);
+            }
+            else {
+                return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);
+            }
+        }
     }
 
     @Operation(summary = "Convert input file", description = "Convert input file to video using password based encryption")
     @PostMapping(path = PathParamConstants.UPLOAD_FILE_AND_GET_URL_AND_VIDEO_NAME)
+    @CrossOrigin(origins = "*")
     public ResponseEntity<Pair<String, String>> uploadFileAndGetURLAndVideoName(@RequestParam("file") MultipartFile file, @RequestParam("password") String password, @RequestParam("name") String name) throws IOException {
         log.info("uploadFileAndGetURL endpoint entered");
 
@@ -88,6 +133,7 @@ public class FIleInputController {
 
     @Operation(summary = "Convert video to file", description = "Convert video from drive to original file")
     @PostMapping(path = PathParamConstants.RETRIEVE_FILE_FROM_URL_AND_VIDEO_NAME)
+    @CrossOrigin(origins = "*")
     public ResponseEntity<String> retrieveFileFromURLAndVideoName(@RequestParam("password") String password, @RequestParam("name") String name, @RequestParam("URL") String URL) throws IOException {
         log.info("retrieveFile endpoint entered");
 
@@ -100,29 +146,69 @@ public class FIleInputController {
 
     @Operation(summary = "Convert video to file", description = "Convert video from drive to original file")
     @PostMapping(path = PathParamConstants.RETRIEVE_FILE_FROM_URL)
-    public ResponseEntity<StreamingResponseBody> retrieveFileFromURL(@RequestParam("password") String password, @RequestParam("URL") String URL) throws IOException {
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<StreamingResponseBody> retrieveFileFromURL(@RequestParam("password") String password, @RequestParam("URL") String URL, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
         log.info("retrieveFile endpoint entered");
 
-        byte[] fileContent = fileConversionManager.convertSignedVideoToFileUsingURL(password, URL);
+        String url = "http://localhost:3000/api/auth/get/me";
+        String token = authorizationHeader.replace("Bearer ", "");
 
-        StreamingResponseBody responseBody = outputStream -> {
-            outputStream.write(fileContent);
-            outputStream.flush();
-        };
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"file.bin\"")
-                .body(responseBody);
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+            System.out.println(response.getStatusLine());
+            if (response.getStatusLine().getStatusCode() == 200) {
+                byte[] fileContent = fileConversionManager.convertSignedVideoToFileUsingURL(password, URL);
+
+                StreamingResponseBody responseBody = outputStream -> {
+                    outputStream.write(fileContent);
+                    outputStream.flush();
+                };
+
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"file.bin\"")
+                        .body(responseBody);
+            }
+            else if (response.getStatusLine().getStatusCode() == 401) {
+                return new ResponseEntity<StreamingResponseBody>(outputStream -> {}, HttpStatus.UNAUTHORIZED);
+            }
+            else {
+                return new ResponseEntity<StreamingResponseBody>(outputStream -> {}, HttpStatus.BAD_REQUEST);
+            }
+        }
     }
-
 
     @Operation(summary = "Delete user videos", description = "Delete user videos using user info")
     @DeleteMapping(path = PathParamConstants.DELETE_USER_VIDEOS)
-    public ResponseEntity<Boolean> deleteUserVideos(@RequestBody @Valid List<UserInfoRequest> userInfoRequests) {
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<String> deleteUserVideos(@RequestBody @Valid List<UserInfoRequest> userInfoRequests, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
         log.info("retrieveFile endpoint entered");
 
-        Boolean deletionCompleted = fileConversionManager.deleteUserVideos(userInfoRequests);
+        System.out.println(authorizationHeader);
 
-        return ResponseEntity.ok(deletionCompleted);
+
+        String url = "http://localhost:3000/api/auth/get/me";
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+            System.out.println(response.getStatusLine());
+            if (response.getStatusLine().getStatusCode() == 200) {
+                Boolean deletionCompleted = fileConversionManager.deleteUserVideos(userInfoRequests);
+                if (deletionCompleted) {
+                    return new ResponseEntity<String>("Successful deletion", HttpStatus.OK);
+                }
+                return new ResponseEntity<String>("Unsuccessful deletion", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            else if (response.getStatusLine().getStatusCode() == 401) {
+                return new ResponseEntity<String>("Unsuccessful authorization", HttpStatus.UNAUTHORIZED);            }
+            else {
+                return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);            }
+        }
     }
 }
