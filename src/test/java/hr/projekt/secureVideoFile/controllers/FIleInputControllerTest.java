@@ -7,6 +7,7 @@ import hr.projekt.secureVideoFile.managers.FileConversionManager;
 import hr.projekt.secureVideoFile.request.UserInfoRequest;
 import javafx.util.Pair;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
