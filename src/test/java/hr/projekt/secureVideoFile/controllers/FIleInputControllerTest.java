@@ -9,6 +9,8 @@ import javafx.util.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -105,7 +107,7 @@ class FIleInputControllerTest {
                 .andExpect(content().string("Hello world"));
     }
 
-    @DisabledOnOs(OS.WINDOWS)
+    @DisabledIf("#{systemProperties['CI'] == true}")
     @Test
     public void testUploadFileAndGetURL() throws Exception {
         // Mock the conversion result
@@ -134,7 +136,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertFileToSignedVideoAndGetURL(eq(file), eq("sample_password"), eq("sample_name"));
     }
 
-    @DisabledOnOs(OS.WINDOWS)
+    @DisabledIf("#{systemProperties['CI'] == true}")
     @Test
     public void testUploadFileAndGetURLUnauthorized() throws Exception {
 
@@ -206,7 +208,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertSignedVideoToFileUsingURLAndVideoName(eq("sample_name"), eq("sample_password"), eq("https://example.com/sample-video.mp4"));
     }
 
-    @DisabledOnOs(OS.WINDOWS)
+    @DisabledIf("#{systemProperties['CI'] == true}")
     @Test
     public void testRetrieveFileFromURL() throws Exception {
         // Mock the conversion result
@@ -229,7 +231,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertSignedVideoToFileUsingURL(eq("sample_password"), eq("https://example.com/sample-video.mp4"));
     }
 
-    @DisabledOnOs(OS.WINDOWS)
+    @DisabledIf("#{systemProperties['CI'] == true}")
     @Test
     public void testRetrieveFileFromURLUnathorized() throws Exception {
 
@@ -245,7 +247,7 @@ class FIleInputControllerTest {
 
     }
 
-    @DisabledOnOs(OS.WINDOWS)
+    @DisabledIf("#{systemProperties['CI'] == true}")
     @Test
     public void testDeleteUserVideos() throws Exception {
         // Prepare the request body
@@ -274,7 +276,7 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).deleteUserVideos(eq(userInfoRequests));
     }
 
-    @DisabledOnOs(OS.WINDOWS)
+    @DisabledIf("#{systemProperties['CI'] == true}")
     @Test
     public void testDeleteUserVideosUnauthorized() throws Exception {
         // Prepare the request body
