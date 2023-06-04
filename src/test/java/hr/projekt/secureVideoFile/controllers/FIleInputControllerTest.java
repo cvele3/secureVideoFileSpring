@@ -107,7 +107,6 @@ class FIleInputControllerTest {
                 .andExpect(content().string("Hello world"));
     }
 
-    @DisabledIf("${systemProperties['CI'] == 'true'}")
     @Test
     public void testUploadFileAndGetURL() throws Exception {
         // Mock the conversion result
@@ -136,7 +135,6 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertFileToSignedVideoAndGetURL(eq(file), eq("sample_password"), eq("sample_name"));
     }
 
-    @DisabledIf("${systemProperties['CI'] == 'true'}")
     @Test
     public void testUploadFileAndGetURLUnauthorized() throws Exception {
 
@@ -158,7 +156,6 @@ class FIleInputControllerTest {
                 .andExpect(content().string("Unsuccessful authorization"));
 
     }
-
 
     @Test
     public void testUploadFileAndGetURLAndVideoName() throws Exception {
@@ -208,7 +205,6 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertSignedVideoToFileUsingURLAndVideoName(eq("sample_name"), eq("sample_password"), eq("https://example.com/sample-video.mp4"));
     }
 
-    @DisabledIf("${systemProperties['CI'] == 'true'}")
     @Test
     public void testRetrieveFileFromURL() throws Exception {
         // Mock the conversion result
@@ -231,7 +227,6 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).convertSignedVideoToFileUsingURL(eq("sample_password"), eq("https://example.com/sample-video.mp4"));
     }
 
-    @DisabledIf("${systemProperties['CI'] == 'true'}")
     @Test
     public void testRetrieveFileFromURLUnathorized() throws Exception {
 
@@ -247,7 +242,6 @@ class FIleInputControllerTest {
 
     }
 
-    @DisabledIf("${systemProperties['CI'] == 'true'}")
     @Test
     public void testDeleteUserVideos() throws Exception {
         // Prepare the request body
@@ -276,7 +270,6 @@ class FIleInputControllerTest {
         verify(fileConversionManager, times(1)).deleteUserVideos(eq(userInfoRequests));
     }
 
-    @DisabledIf("${systemProperties['CI'] == 'true'}")
     @Test
     public void testDeleteUserVideosUnauthorized() throws Exception {
         // Prepare the request body
