@@ -1,6 +1,9 @@
 package hr.projekt.secureVideoFile.controllers;
 
 import hr.projekt.secureVideoFile.constants.PathParamConstants;
+import hr.projekt.secureVideoFile.enums.StatusCode;
+import hr.projekt.secureVideoFile.exceptions.FileEncryptionException;
+import hr.projekt.secureVideoFile.exceptions.FileManipulationException;
 import hr.projekt.secureVideoFile.managers.FileConversionManager;
 import hr.projekt.secureVideoFile.request.UserInfoRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -212,4 +215,43 @@ public class FIleInputController {
                 return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);            }
         }
     }
+
+    @ExceptionHandler(FileEncryptionException.class)
+    public ResponseEntity<String> handleFileEncryptionException(FileEncryptionException ex) {
+        String errorMessage = "Invalid password";
+        StatusCode statusCode = ex.getStatusCode();
+
+        HttpStatus httpStatus;
+
+        switch (statusCode) {
+            case FILE_DECRYPTION_ERROR, FILE_ENCRYPTION_ERROR:
+                httpStatus = HttpStatus.NOT_ACCEPTABLE;
+                break;
+            default:
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                break;
+        }
+
+        return ResponseEntity.status(httpStatus).body(errorMessage);
+    }
+
+    @ExceptionHandler(FileManipulationException.class)
+    public ResponseEntity<String> handleFileManipulationException(FileManipulationException ex) {
+        String errorMessage = "Invalid password";
+        StatusCode statusCode = ex.getStatusCode();
+
+        HttpStatus httpStatus;
+
+        switch (statusCode) {
+            case ERROR_WHILE_SAVING_FILE, ERROR_WHILE_READING_FILE, FILE_DELETION_ERROR:
+                httpStatus = HttpStatus.BAD_REQUEST;
+                break;
+            default:
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                break;
+        }
+
+        return ResponseEntity.status(httpStatus).body(errorMessage);
+    }
+
 }
