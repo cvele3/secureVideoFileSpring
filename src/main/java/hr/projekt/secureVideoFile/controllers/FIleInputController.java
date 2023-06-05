@@ -148,7 +148,7 @@ public class FIleInputController {
     @Operation(summary = "Convert video to file", description = "Convert video from drive to original file")
     @PostMapping(path = PathParamConstants.RETRIEVE_FILE_FROM_URL)
     @CrossOrigin(origins = "*")
-    public ResponseEntity<StreamingResponseBody> retrieveFileFromURL(@RequestParam("password") String password, @RequestParam("URL") String URL, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
+    public ResponseEntity<StreamingResponseBody> retrieveFileFromURL(@RequestParam("password") String password, @RequestParam("URL") String URL, @RequestParam("name") String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) throws IOException {
         log.info("retrieveFile endpoint entered");
 
         String url = "http://localhost:3000/api/auth/get/me";
@@ -169,7 +169,7 @@ public class FIleInputController {
                 };
 
                 return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"file.bin\"")
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + name + ".zip\"")
                         .body(responseBody);
             }
             else if (response.getStatusLine().getStatusCode() == 401) {
