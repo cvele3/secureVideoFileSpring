@@ -1,6 +1,8 @@
 package hr.projekt.secureVideoFile.controllers;
 
 import hr.projekt.secureVideoFile.constants.PathParamConstants;
+import hr.projekt.secureVideoFile.enums.StatusCode;
+import hr.projekt.secureVideoFile.exceptions.*;
 import hr.projekt.secureVideoFile.managers.FileConversionManager;
 import hr.projekt.secureVideoFile.request.UserInfoRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +14,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -212,4 +215,89 @@ public class FIleInputController {
                 return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);            }
         }
     }
+
+    @ExceptionHandler(FileEncryptionException.class)
+    public ResponseEntity<String> handleFileEncryptionException(FileEncryptionException ex) {
+        String errorMessage = "Invalid file password";
+        StatusCode statusCode = ex.getStatusCode();
+
+        HttpStatus httpStatus;
+
+        switch (statusCode) {
+            case FILE_DECRYPTION_ERROR, FILE_ENCRYPTION_ERROR:
+                httpStatus = HttpStatus.UNAUTHORIZED;
+                break;
+            default:
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                break;
+        }
+
+        return ResponseEntity.status(httpStatus).body(errorMessage);
+    }
+
+    @ExceptionHandler(GoogleDriveInitializationException.class)
+    public ResponseEntity<String> handleGoogleDriveInitializationException(GoogleDriveInitializationException ex) {
+        String errorMessage = "Google Drive initialization failed, check your credentials";
+        StatusCode statusCode = ex.getStatusCode();
+
+        HttpStatus httpStatus;
+
+        switch (statusCode) {
+            case GOOGLE_DRIVE_INITIALIZATION_ERROR:
+                httpStatus = HttpStatus.UNAUTHORIZED;
+                break;
+            default:
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                break;
+        }
+
+        return ResponseEntity.status(httpStatus).body(errorMessage);
+    }
+
+    @ExceptionHandler(GoogleDriveUploadException.class)
+    public ResponseEntity<String> handleGoogleDriveUploadException(GoogleDriveUploadException ex) {
+        String errorMessage = "Failed to upload to Google Drive";
+        StatusCode statusCode = ex.getStatusCode();
+
+        HttpStatus httpStatus;
+
+        switch (statusCode) {
+            case GOOGLE_DRIVE_UPLOAD_ERROR:
+                httpStatus = HttpStatus.BAD_REQUEST;
+                break;
+            default:
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                break;
+        }
+
+        return ResponseEntity.status(httpStatus).body(errorMessage);
+    }
+
+    @ExceptionHandler(GoogleDriveVideoDownloadException.class)
+    public ResponseEntity<String> handleGoogleDriveVideoDownloadException(GoogleDriveVideoDownloadException ex) {
+        String errorMessage = "Failed to download from Google drive, check URL and name of video";
+        StatusCode statusCode = ex.getStatusCode();
+
+        HttpStatus httpStatus;
+
+        switch (statusCode) {
+            case GOOGLE_DRIVE_VIDEO_DOWNLOAD_ERROR:
+                httpStatus = HttpStatus.BAD_REQUEST;
+                break;
+            default:
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                break;
+        }
+
+        return ResponseEntity.status(httpStatus).body(errorMessage);
+    }
+
+    @ExceptionHandler(HttpHostConnectException.class)
+    public ResponseEntity<String> handleHttpHostConnectException(HttpHostConnectException ex) {
+        String errorMessage = "Connection to service was refused, check if service is up and running";
+
+
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorMessage);
+    }
+
 }
