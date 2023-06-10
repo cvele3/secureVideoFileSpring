@@ -218,33 +218,14 @@ public class FIleInputController {
 
     @ExceptionHandler(FileEncryptionException.class)
     public ResponseEntity<String> handleFileEncryptionException(FileEncryptionException ex) {
-        String errorMessage = "Invalid password";
+        String errorMessage = "Invalid file password";
         StatusCode statusCode = ex.getStatusCode();
 
         HttpStatus httpStatus;
 
         switch (statusCode) {
             case FILE_DECRYPTION_ERROR, FILE_ENCRYPTION_ERROR:
-                httpStatus = HttpStatus.NOT_ACCEPTABLE;
-                break;
-            default:
-                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                break;
-        }
-
-        return ResponseEntity.status(httpStatus).body(errorMessage);
-    }
-
-    @ExceptionHandler(FileManipulationException.class)
-    public ResponseEntity<String> handleFileManipulationException(FileManipulationException ex) {
-        String errorMessage = "Invalid password";
-        StatusCode statusCode = ex.getStatusCode();
-
-        HttpStatus httpStatus;
-
-        switch (statusCode) {
-            case ERROR_WHILE_SAVING_FILE, ERROR_WHILE_READING_FILE, FILE_DELETION_ERROR:
-                httpStatus = HttpStatus.BAD_REQUEST;
+                httpStatus = HttpStatus.UNAUTHORIZED;
                 break;
             default:
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -281,7 +262,7 @@ public class FIleInputController {
         HttpStatus httpStatus;
 
         switch (statusCode) {
-            case GOOGLE_DRIVE_INITIALIZATION_ERROR:
+            case GOOGLE_DRIVE_UPLOAD_ERROR:
                 httpStatus = HttpStatus.BAD_REQUEST;
                 break;
             default:
